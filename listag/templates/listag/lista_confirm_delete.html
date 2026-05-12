@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% block page_title %}
+    Excluír Tarefa
+{% endblock page_title %}
+
+{% block content %}
+    <h1>Excluír Tarefa?</h1>
+
+    <p>Tem certeza que deseja excluír a tarefa <strong>{{ escola.titulo }}</strong>?</p>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <button type="submit" class="btn btn-danger">Excluír</button>
+        <a href="{% url 'escola-lista' %}" class="btn btn-primary">Cancelar</a>
+    </form>
+{% endblock content %}
