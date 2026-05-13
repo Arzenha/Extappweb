@@ -18,17 +18,7 @@ class Migration(migrations.Migration):
                 ('responsavel', models.CharField(max_length=100, verbose_name='Responsável')),
                 ('descricao', models.TextField(verbose_name='Descrição')),
                 ('data', models.DateField(verbose_name='Data')),
-                ('clima', models.CharField(
-                    choices=[
-                        ('ensolarado', 'Ensolarado'),
-                        ('nublado', 'Nublado'),
-                        ('chuvoso', 'Chuvoso'),
-                        ('parcialmente_nublado', 'Parcialmente Nublado'),
-                        ('tempestuoso', 'Tempestuoso'),
-                    ],
-                    max_length=50,
-                    verbose_name='Clima'
-                )),
+                ('clima', models.CharField(choices=[('ensolarado', 'Ensolarado'), ('nublado', 'Nublado'), ('chuvoso', 'Chuvoso'), ('parcialmente_nublado', 'Parcialmente Nublado'), ('tempestuoso', 'Tempestuoso')], max_length=50, verbose_name='Clima')),
                 ('funcionarios', models.IntegerField(verbose_name='Número de Funcionários')),
                 ('observacoes', models.TextField(blank=True, null=True, verbose_name='Observações')),
                 ('foto', models.ImageField(blank=True, null=True, upload_to='rdo_fotos/', verbose_name='Foto')),
