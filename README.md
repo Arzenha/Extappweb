@@ -108,13 +108,19 @@ python -m venv venv
 venv\Scripts\Activate.ps1
 ```
 
-3. Instale as dependências (adicione o `requirements.txt` se disponível) ou instale manualmente:
+3. Instale as dependências:
 
 ```bash
-pip install django python-decouple dj-database-url django-crispy-forms crispy-bootstrap5
+pip install -r requirements.txt
 ```
 
-4. Configure variáveis de ambiente no `.env`:
+4. Configure variáveis de ambiente copiando `.env.example` para `.env`:
+
+```bash
+copy .env.example .env
+```
+
+5. Edite `.env` conforme necessário:
 
 ```env
 SECRET_KEY=chave-secreta-aqui
