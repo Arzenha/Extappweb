@@ -1,90 +1,100 @@
 # Extappweb
 
-Extappweb é um projeto Django simples para gerenciamento de tarefas (to-do list) dentro da aplicação `listag`.
+Extappweb é um projeto Django para gerenciamento de Relatórios Diários de Obra (RDO) na aplicação `listag`.
 
 ## Visão geral
 
 O projeto contém:
 
 - `manage.py`: utilitário de linha de comando Django.
-- `setup/`: configuração do projeto Django, incluindo settings, URLs, WSGI e ASGI.
-- `listag/`: app principal do projeto, responsável por modelar, exibir e gerenciar tarefas.
-- `db.sqlite3`: banco de dados SQLite usado por padrão.
+- `setup/`: configuração do projeto, incluindo settings, URLs, WSGI e ASGI.
+- `listag/`: app principal que gerencia o modelo `RDO`.
+- `requirements.txt`: dependências fixas do projeto.
+- `.env.example`: exemplo de variáveis de ambiente.
+
+## Melhorias recentes
+
+- Adicionado `requirements.txt` para instalação fácil de dependências.
+- Adicionado `.env.example` para padronizar a configuração local.
+- Atualizado `README.md` com instruções claras de instalação e execução.
+- Garantido que `db.sqlite3` seja ignorado pelo Git via `.gitignore`.
+- Adicionados scripts de suporte:
+  - `migrate.py`
+  - `start_rdo.py`
+  - `01_migrate.bat`
+  - `02_runserver.bat`
+  - `run_test.bat`
+- Removidos arquivos binários e de cache (`__pycache__`, `.pyc`) do controle de versão.
+- Implementada geração de PDF para relatórios RDO com `reportlab`.
+- Configuração de upload de foto para cada RDO.
+- Uso de `crispy_forms` com `bootstrap5` para formulários mais elegantes.
+- Criação de dashboard com métricas de RDOs totais, funcionários e registros da última semana.
 
 ## Estrutura do projeto
 
 ### `setup/`
 
 - `settings.py`
-  - Configura o Django, incluindo apps instalados, middleware, templates, banco de dados, internacionalização e configuração do `crispy_forms`.
-  - Usa `python-decouple` para carregar variáveis de ambiente como `SECRET_KEY`, `DEBUG`, `ALLOWED_HOSTS` e `DATABASE_URL`.
-  - Banco de dados padrão: SQLite (`db.sqlite3`).
-  - Idioma definido como `pt-br` e fuso horário `America/Belem`.
+  - Configura o Django, apps, middleware, templates, banco de dados e internacionalização.
+  - Carrega variáveis de ambiente com `python-decouple`.
+  - Suporta `DATABASE_URL` via `dj_database_url`.
+  - Usa `pt-br` e `America/Belem`.
+  - Define `MEDIA_ROOT` e `MEDIA_URL` para uploads de fotos.
 
 - `urls.py`
-  - Roteia as URLs principais do projeto.
-  - Rotas cadastradas:
-    - `admin/`: painel administrativo Django.
-    - `/`: lista de tarefas.
-    - `escola/criar/`: cria nova tarefa.
-    - `escola/<int:pk>/editar/`: edita tarefa existente.
-    - `escola/<int:pk>/deletar/`: exclui tarefa.
-    - `escola/<int:pk>/finalizar/`: marca tarefa como concluída.
+  - Rotas principais do projeto:
+    - `admin/`
+    - `/`
+    - `rdo/`
+    - `rdo/criar/`
+    - `rdo/<int:pk>/`
+    - `rdo/<int:pk>/editar/`
+    - `rdo/<int:pk>/deletar/`
+    - `rdo/<int:pk>/pdf/`
 
 - `wsgi.py` / `asgi.py`
-  - Ponto de entrada para deploys WSGI/ASGI (padrão Django).
+  - Pontos de entrada padrão para deploy.
 
 ### `listag/`
 
 - `models.py`
-  - Define o modelo `Escola` com os campos:
-    - `titulo`: título da tarefa.
-    - `data_criacao`: data e hora de criação automática.
-    - `data_entrega`: data e hora de entrega prevista.
-    - `data_finalizada`: data em que a tarefa foi concluída.
-  - Adiciona método `mark_as_completed()` para marcar a tarefa como finalizada com a data atual.
-  - Ordena os registros por `data_criacao`.
+  - Define o modelo `RDO` com campos como:
+    - `obra`
+    - `responsavel`
+    - `descricao`
+    - `data`
+    - `clima`
+    - `funcionarios`
+    - `observacoes`
+    - `foto`
+  - Inclui timestamps de criação e atualização.
+  - Ordena por data de forma decrescente.
 
 - `views.py`
-  - `EscolaView`: exibe a lista de tarefas.
-  - `EscolaCreateView`: formulário para criação de tarefas.
-  - `EscolaUpdateView`: formulário para edição de tarefas.
-  - `EscolaDeleteView`: confirma e exclui tarefas.
-  - `EscolaCompleteView`: marca uma tarefa como concluída e redireciona para a lista.
+  - `DashboardView` mostra métricas gerais de RDO.
+  - `RDOListView` lista registros com paginação.
+  - `RDOCreateView` cria novos relatórios.
+  - `RDOUpdateView` edita relatórios existentes.
+  - `RDODeleteView` exclui relatórios.
+  - `RDODetailView` exibe detalhes de um RDO.
+  - `RDOPdfView` exporta o relatório para PDF.
+
+- `forms.py`
+  - `RDOForm` usa `crispy_forms` e layout Bootstrap 5.
+  - Campos configurados para datas, texto e upload de imagens.
 
 - `admin.py`
-  - Arquivo presente, mas sem registros de modelos no admin.
-
-- `tests.py`
-  - Arquivo de testes existente, ainda sem testes implementados.
-
-### `listag/templates/`
-
-- `base.html`
-  - Template base com Bootstrap 5.
-  - Cabeçalho fixo com link para a lista de tarefas.
-
-- `listag/listag_lista.html`
-  - Página principal que mostra a lista de tarefas em tabela.
-  - Permite concluir, editar ou excluir cada tarefa.
-  - Exibe mensagem quando não há tarefas cadastradas.
-  - Link para criar nova tarefa.
-
-- `listag/lista_form.html`
-  - Formulário para criar ou editar tarefas.
-  - Usa `crispy_forms` para renderizar os campos.
-
-- `listag/lista_confirm_delete.html`
-  - Página de confirmação de exclusão de tarefa.
+  - Registra `RDO` no admin Django.
 
 ## Funcionalidades principais
 
-- Listar tarefas cadastradas.
-- Criar nova tarefa com título e data de entrega.
-- Editar tarefas existentes.
-- Excluir tarefas.
-- Marcar tarefas como concluídas.
-- Interface responsiva com Bootstrap.
+- Painel dashboard com métricas de RDO.
+- Criação, edição e exclusão de relatórios de obra.
+- Visualização detalhada de cada RDO.
+- Exportação de RDO para PDF.
+- Upload de foto por relatório.
+- Formulários Bootstrap com `crispy_forms`.
+- Banco de dados local SQLite como padrão.
 
 ## Dependências
 
@@ -93,6 +103,8 @@ O projeto contém:
 - dj-database-url
 - django-crispy-forms
 - crispy-bootstrap5
+- reportlab
+- Pillow
 
 ## Como executar
 
@@ -129,25 +141,25 @@ ALLOWED_HOSTS=localhost,127.0.0.1
 DATABASE_URL=sqlite:///db.sqlite3
 ```
 
-5. Execute as migrações:
+6. Execute as migrações:
 
 ```bash
 python manage.py migrate
 ```
 
-6. Inicie o servidor:
+7. Inicie o servidor:
 
 ```bash
 python manage.py runserver
 ```
 
-7. Acesse:
+8. Acesse:
 
-- `http://127.0.0.1:8000/` para a lista de tarefas
-- `http://127.0.0.1:8000/admin/` para o admin Django
+- `http://127.0.0.1:8000/`
+- `http://127.0.0.1:8000/admin/`
 
 ## Observações
 
-- O projeto ainda não registra `Escola` em `listag/admin.py`.
-- O arquivo `listag/tests.py` está disponível para adicionar testes futuros.
-- A interface é construída com Bootstrap via CDN.
+- `db.sqlite3` é um banco local e não deve ser versionado.
+- Use `.env` para configurações sensíveis e locais.
+- É recomendado não commitar arquivos de cache Python (`__pycache__`, `.pyc`).
