@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Detalhes do RDO{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="mb-3">
+        <a href="{% url 'rdo-lista' %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i> Voltar
+        </a>
+    </div>
+
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-building"></i> {{ rdo.obra }}
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Responsável</h6>
+                            <p>
+                                <i class="bi bi-person-circle"></i> {{ rdo.responsavel }}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Data</h6>
+                            <p>
+                                <i class="bi bi-calendar"></i> {{ rdo.data|date:"d/m/Y" }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Clima</h6>
+                            <p>
+                                <i class="bi bi-cloud-sun"></i> {{ rdo.get_clima_display }}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <h6 class="text-muted">Funcionários</h6>
+                            <p>
+                                <i class="bi bi-people"></i> {{ rdo.funcionarios }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <hr>
+
+                    <h6 class="text-muted">Descrição</h6>
+                    <p class="mb-3">{{ rdo.descricao|linebreaks }}</p>
+
+                    {% if rdo.observacoes %}
+                    <h6 class="text-muted">Observações</h6>
+                    <p>{{ rdo.observacoes|linebreaks }}</p>
+                    {% endif %}
+
+                    <hr>
+
+                    <div class="d-flex gap-2">
+                        <a href="{% url 'rdo-editar' rdo.pk %}" class="btn btn-warning">
+                            <i class="bi bi-pencil"></i> Editar
+                        </a>
+                        <a href="{% url 'rdo-pdf' rdo.pk %}" class="btn btn-danger" target="_blank">
+                            <i class="bi bi-file-pdf"></i> Gerar PDF
+                        </a>
+                        <a href="{% url 'rdo-deletar' rdo.pk %}" class="btn btn-danger">
+                            <i class="bi bi-trash"></i> Deletar
+                        </a>
+                    </div>
+                </div>
+                <div class="card-footer text-muted">
+                    <small>
+                        Criado em: {{ rdo.criado_em|date:"d/m/Y H:i" }} |
+                        Atualizado em: {{ rdo.atualizado_em|date:"d/m/Y H:i" }}
+                    </small>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            {% if rdo.foto %}
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h6 class="mb-0">
+                        <i class="bi bi-image"></i> Foto
+                    </h6>
+                </div>
+                <div class="card-body p-0">
+                    <img src="{{ rdo.foto.url }}" class="img-fluid rounded" alt="{{ rdo.obra }}">
+                </div>
+            </div>
+            {% else %}
+            <div class="card shadow-sm">
+                <div class="card-body text-center text-muted">
+                    <i class="bi bi-image" style="font-size: 3rem;"></i>
+                    <p class="mt-2">Nenhuma foto anexada</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

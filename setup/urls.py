@@ -1,19 +1,28 @@
 from django.contrib import admin
 from django.urls import path
+from django.conf import settings
+from django.conf.urls.static import static
 
 from listag.views import (
-    EscolaView,
-    EscolaCreateView,
-    EscolaUpdateView,
-    EscolaDeleteView,
-    EscolaCompleteView,
+    DashboardView,
+    RDOListView,
+    RDOCreateView,
+    RDOUpdateView,
+    RDODeleteView,
+    RDODetailView,
+    RDOPdfView,
     )
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', EscolaView.as_view(), name='escola-lista'),
-    path('escola/criar/', EscolaCreateView.as_view(), name='escola-criar'),
-    path('escola/<int:pk>/editar/', EscolaUpdateView.as_view(), name='escola-editar'),
-    path('escola/<int:pk>/deletar/', EscolaDeleteView.as_view(), name='escola-deletar'),
-    path('escola/<int:pk>/finalizar/', EscolaCompleteView.as_view(), name='escola-finalizar'),
+    path('', DashboardView.as_view(), name='dashboard'),
+    path('rdo/', RDOListView.as_view(), name='rdo-lista'),
+    path('rdo/criar/', RDOCreateView.as_view(), name='rdo-criar'),
+    path('rdo/<int:pk>/', RDODetailView.as_view(), name='rdo-detalhes'),
+    path('rdo/<int:pk>/editar/', RDOUpdateView.as_view(), name='rdo-editar'),
+    path('rdo/<int:pk>/deletar/', RDODeleteView.as_view(), name='rdo-deletar'),
+    path('rdo/<int:pk>/pdf/', RDOPdfView.as_view(), name='rdo-pdf'),
 ]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -1,0 +1,109 @@
+{% extends 'base.html' %}
+
+{% block page_title %}Lista de RDOs{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>
+            <i class="bi bi-list-ul"></i> Relatórios Diários de Obra
+        </h1>
+        <a href="{% url 'rdo-criar' %}" class="btn btn-success btn-lg">
+            <i class="bi bi-plus-circle"></i> Novo RDO
+        </a>
+    </div>
+
+    {% if rdo_list %}
+    <div class="row">
+        {% for rdo in rdo_list %}
+        <div class="col-md-6 col-lg-4 mb-4">
+            <div class="card shadow-sm h-100">
+                {% if rdo.foto %}
+                <img src="{{ rdo.foto.url }}" class="card-img-top" alt="{{ rdo.obra }}" style="height: 200px; object-fit: cover;">
+                {% else %}
+                <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
+                    <i class="bi bi-image text-white" style="font-size: 3rem;"></i>
+                </div>
+                {% endif %}
+                <div class="card-body">
+                    <h5 class="card-title">
+                        <i class="bi bi-building"></i> {{ rdo.obra }}
+                    </h5>
+                    <p class="card-text text-muted small">
+                        <i class="bi bi-calendar"></i> {{ rdo.data|date:"d/m/Y" }}
+                    </p>
+                    <p class="card-text">
+                        <strong>Responsável:</strong> {{ rdo.responsavel }}
+                    </p>
+                    <p class="card-text">
+                        <i class="bi bi-cloud-sun"></i>
+                        <strong>Clima:</strong> {{ rdo.get_clima_display }}
+                    </p>
+                    <p class="card-text">
+                        <i class="bi bi-people"></i>
+                        <strong>Funcionários:</strong> {{ rdo.funcionarios }}
+                    </p>
+                    <p class="card-text text-truncate" title="{{ rdo.descricao }}">
+                        <small>{{ rdo.descricao|truncatewords:10 }}</small>
+                    </p>
+                </div>
+                <div class="card-footer bg-white">
+                    <a href="{% url 'rdo-detalhes' rdo.pk %}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-eye"></i> Ver Detalhes
+                    </a>
+                    <a href="{% url 'rdo-editar' rdo.pk %}" class="btn btn-warning btn-sm">
+                        <i class="bi bi-pencil"></i> Editar
+                    </a>
+                    <a href="{% url 'rdo-pdf' rdo.pk %}" class="btn btn-danger btn-sm" target="_blank">
+                        <i class="bi bi-file-pdf"></i> PDF
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    {% if is_paginated %}
+    <nav aria-label="Page navigation" class="mt-4">
+        <ul class="pagination justify-content-center">
+            {% if page_obj.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1">Primeira</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.previous_page_number }}">Anterior</a>
+            </li>
+            {% endif %}
+
+            {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+            <li class="page-item active">
+                <span class="page-link">{{ num }}</span>
+            </li>
+            {% else %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+            </li>
+            {% endif %}
+            {% endfor %}
+
+            {% if page_obj.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.next_page_number }}">Próxima</a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}">Última</a>
+            </li>
+            {% endif %}
+        </ul>
+    </nav>
+    {% endif %}
+
+    {% else %}
+    <div class="alert alert-info" role="alert">
+        <i class="bi bi-info-circle"></i> Nenhum RDO cadastrado ainda.
+        <a href="{% url 'rdo-criar' %}" class="alert-link">Criar um novo RDO</a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
